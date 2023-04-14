@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout1}">
+
+<div layout:fragment="script">
+	<script th:inline="javascript">
+		function checkMeeting() {
+		 if (confirm("신청하시겠습니까??")){    //확인
+		 }else{   //취소
+			alert("취소되었습니다.")
+		     return false;
+		 }
+		}
+		function checkDelete() {
+	 		if (confirm("삭제 하시겠습니까??")){    //확인
+	 		}else{   //취소
+				alert("취소되었습니다.")
+	   		  return false;
+			 }
+		}
+		function checkFinish() {
+	 		if (confirm("모집 종료 하시겠습니까??")){    //확인
+	 		}else{   //취소
+	   		  return false;
+			 }
+		}
+		function checkAllow() {
+	 		if (confirm("수락 하시겠습니까??")){    //확인
+	 		}else{   //취소
+	   		  return false;
+			 }
+		}		
+	</script>
+</div>
+
+<div layout:fragment="content">
+	<div id="inwrap02">
+		<div class="p_title"><img src="/img/pet_icon13.png">모임 게시판</div>
+		<!-- 상세모집내용,  				참여하기 버튼 , 		모집인원,  		현재 참여 신청 인원,  				참여 신청 수락 인원
+		meetingBoard.comment		button			meetingCount		${#lists.size(meetingMember)}		
+	 	-->
+		<form role="form" method="post" th:object="${meetingBoard}">						
+			<div class="b_view">
+				<code class="meet_count">현재 모집 인원 <span th:text="${#lists.size(meetingMember)}"></span></code>
+	    		<code class="meet_count">모집 제한 인원 <span th:text="${meetingBoard.meetingCount}"></span></code>
+	    		<code class="meet_count">모집 지역 <span th:text="${meetingBoard.meetingAdr}"></span></code>
+		    	<div class="b_view_t">
+		    		<span th:text="${meetingBoard.title}"></span>
+		    		<span style="float:right;font-size:14px;" th:text="${#temporals.format(meetingBoard.meetingUploadDate, 'yyyy-MM-dd HH:mm' )}"></span>
+		    		<span th:text="${meetingBoard.meetingWriter}" class="b_writer"></span>
+		    	</div>
+		    	<div class="b_view_c">
+			        <p th:text="${meetingBoard.meetingComment}"></p>
+			        
+			        <div class="meet_v">
+				        <input type="hidden" name="goMember" th:value="${#authentication.name}">
+						<input type="hidden" name="meeting" value="go">
+						<input type="hidden" name="meetingBoard" th:value="${meetingBoard.id}">
+				 		
+						<div th:if="${meetingBoard.finish == 'finish'}">
+							<div class="Btn_box">
+								<p class="Btn Btn05 btn_meet03">모집마감</p>
+							</div>
+							<div th:each="meetingMember ,status: ${meetingMember}">
+								<p>수락된인원</p>
+								<p th:if="${meetingMember.allow == 'allow'}">
+									[[${meetingMember.goMember}]]님이 수락되셨습니다!
+								</p>				
+							</div>
+						</div>
+						
+						<div th:unless="${meetingBoard.finish == 'finish'}">
+							<div class="Btn_box">
+								<button th:formaction="@{'/meeting/' + ${meetingBoard.id} + '/finish'}" th:if="${meetingBoard.meetingWriter} == ${#authentication.name} " type="submit"
+										onclick="return checkFinish()" class="Btn Btn05 btn_meet02">모집마감하기</button>
+								<button th:if="${meetingBoard.meetingWriter} != ${#authentication.name} " 
+										th:formaction="@{'/meeting/' + ${meetingBoard.id} + '/gomeeting'}"
+										sec:authorize="isAuthenticated()" type="submit" onclick="return checkMeeting()" class="Btn Btn05 btn_meet">신청하기</button>
+							</div>
+							<div th:if="${#authentication.name == meetingBoard.meetingWriter}">
+								<div th:each="meetingMember ,status: ${meetingMember}">
+									<p th:if="${meetingMember.allow == 'allow'}">
+										<span th:text="${meetingMember.goMember}"></span>님
+										<span> 수락되었습니다!!!!!</span>
+									</p>
+									<p th:unless="${meetingMember.allow == 'allow'}">
+										<span th:text = "${meetingMember.goMember}"></span>님이 수락대기중입니다.
+										<button th:formaction="@{'/meeting/' +${meetingBoard.id}+ '/' + ${meetingMember.id} + '/allow'}" th:if="${meetingBoard.meetingWriter} == ${#authentication.name} " type="submit"
+												onclick="return checkAllow()" class="Btn btn_meet04">수락</button>
+									</p>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+			
+				</div>
+	        </div>
+			
+			<div class="Btn_box02">
+				<div class="Btn Btn02 Btn_L btn_left" onclick="history.back()">뒤로가기</div>
+				<div class="Btn Btn02 Btn_L btn_left"><a href="/meeting/list">목록보기</a></div>
+				<button th:formaction="@{'/meeting/delete/' + ${meetingBoard.id}}" th:if="${meetingBoard.meetingWriter} == ${#authentication.name}" type="submit" class="Btn"
+										onclick="return checkDelete()">삭제</button>
+			</div>
+			
+			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+		</form>
+	</div>
+</div>

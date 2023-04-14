@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{layouts/layout1}">
+
+	<div layout:fragment="content">
+		<div id="inwrap02">
+			<div class="p_title"><img src="/img/pet_icon13.png">공지사항</div>
+			<div class="Btn_box03" style="margin-bottom:20px;">
+		       	<button class="Btn Btn02 btn_left" sec:authorize="hasAnyAuthority('ROLE_ADMIN')" aria-current="page" onClick="location.href='/notice/write'">공지 등록</button>
+			</div>
+			<table class="table01">
+				<colgroup>
+					<col />
+					<col width="10%" />
+					<col width="24%" />
+				</colgroup>
+				<thead>      
+			        <tr>
+			        	<th>제목</th>
+			            <th>작성자</th>
+			            <th>등록일</th>
+			        </tr>	
+		      	</thead>
+		      	<tbody>
+					<tr th:each="notice : ${noticeList}">
+		                <td style="text-align:left;">
+		                	<a class="td_list_title" th:href="@{/notice/view/{noticeId}(noticeId = ${notice.id})}">[[${notice.nTitle}]]</a>
+		                </td>
+		                <td th:text="${notice.createdBy}"></td>
+		                <td th:text="${#temporals.format(notice.nRegDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+		           	</tr>
+		        </tbody>
+			</table>
+		   	
+		   	<div class="page_box">
+				<th:block th:each="page : ${#numbers.sequence(startPage, endPage)}">
+					<a th:if="${page != nowPage}" th:href="@{/notice/list(page = ${page -1})}" th:text="${page}"></a>
+					<span th:if="${page == nowPage}" th:text="${page}"></span>
+				<th:block>
+			</div>
+		</div>
+	</div>
+</html>

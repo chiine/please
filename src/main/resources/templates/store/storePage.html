@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<div layout:fragment="content">
+	<div id="inwrap02">
+		<div class="p_title" style="margin-bottom:20px;"><img src="/img/pet_icon13.png">스토어</div>
+		<div class="Btn_box03">
+			<!-- sec:authorize="hasAnyAuthority('ROLE_ADMIN')" : ROLE_ADMIN 권한이 있는 애만 보임 -->
+	       	<button class="Btn Btn02 btn_left" sec:authorize="hasAnyAuthority('ROLE_ADMIN')" aria-current="page" onClick="location.href='/admin/item/new'">상품등록</button>
+	       	<!-- sec:authorize="hasAnyAuthority('ROLE_ADMIN')" : ROLE_ADMIN 권한이 있는 애만 보임 -->
+	       	<button class="Btn Btn02 btn_left" sec:authorize="hasAnyAuthority('ROLE_ADMIN')" aria-current="page" onClick="location.href='/admin/items'">상품관리</button>
+	       	<button class="Btn Btn02 btn_left" sec:authorize="isAuthenticated()" aria-current="page" onClick="location.href='/cart'">장바구니</button>
+	       	<button class="Btn Btn02" sec:authorize="isAuthenticated()" aria-current="page" onClick="location.href='/orders'">구매내역</button>
+		</div>
+		
+		<div class="item_search">
+			<form class="form-inline my-2 my-lg-0" th:action="@{/store}" method="get">
+				<input name="searchQuery" class="item_search_box" type="search" placeholder="Search" aria-label="Search">
+				<button class="Btn" type="submit" style="width:60px">검색</button>
+			</form>
+		</div>		
+    	<input type="hidden" name="searchQuery" th:value="${itemSearchDto.searchQuery}">
+    	<div th:if="${not #strings.isEmpty(itemSearchDto.searchQuery)}" class="item_search_t">
+        	<p th:text="${itemSearchDto.searchQuery} + ' 검색결과 리스트'"></p>
+    	</div>    	
+    	
+		<div class="item_wrap">
+			<div class="item_box">
+				<th:block th:each="item, status: ${items.getContent()}">
+		        	<div class="item_cont">
+	                    <a th:href="'/item/' +${item.id}" class="text-dark">
+							<div class="item_cont_img">
+	                        	<img th:src="${item.imgUrl}" th:alt="${item.itemNm}" height="300" >
+	                        </div>
+	                        <div class="item_cont_text">
+	                            <h4>[[${item.itemNm}]]</h4>
+	                            <!--p>[[${item.itemDetail}]]</p-->
+	                            <p>#오전 7시, 당일 주문 마감!!</p>
+	                            <h3>[[${item.price}]]원</h3>
+	                        </div>
+	                    </a>
+		            </div>
+		        </th:block>
+		    </div>
+		    <div th:with="start=${(items.number/maxPage)*maxPage + 1}, end=(${(items.totalPages == 0) ? 1 : (start + (maxPage - 1) < items.totalPages ? start + (maxPage - 1) : items.totalPages)})" >
+		        <ul class="pagination justify-content-center">
+		            <li class="page-item" th:classappend="${items.number eq 0}?'disabled':''">
+		                <a th:href="@{'/store' + '?searchQuery=' + ${itemSearchDto.searchQuery} + '&page=' + ${items.number-1}}" aria-label='Previous' class="page-link">
+		                    <span aria-hidden='true'>Previous</span>
+		                </a>
+		            </li>
+		            <li class="page-item" th:each="page: ${#numbers.sequence(start, end)}" th:classappend="${items.number eq page-1}?'active':''">
+		                <a th:href="@{'/store' +'?searchQuery=' + ${itemSearchDto.searchQuery} + '&page=' + ${page-1}}" th:inline="text" class="a-color page-link">[[${page}]]</a>
+		            </li>
+		            <li class="page-item" th:classappend="${items.number+1 ge items.totalPages}?'disabled':''">
+		                <a th:href="@{'/store' +'?searchQuery=' + ${itemSearchDto.searchQuery} + '&page=' + ${items.number+1}}" aria-label='Next' class="page-link">
+		                    <span aria-hidden='true'>Next</span>
+		                </a>
+		            </li>
+		        </ul>
+		    </div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{layouts/layout1}">
+	<head>
+		<meta name="_csrf" th:content="${_csrf.token}" />
+		<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+	</head>
+	
+	<div layout:fragment="content">
+		<div id="inwrap02">
+			<div class="p_title"><img src="/img/pet_icon13.png">게시판 글수정</div>
+			<form th:action="@{/board/update/{id}(id=${board.id})}" method="post" enctype="multipart/form-data">
+				<ul class="b_write">
+					<li class="b_write_t">제목</li>
+					<li class="b_write_c">
+						<input name="bTitle" type="text" th:value="${board.bTitle}">						
+					</li>
+					<li class="b_write_t">내용</li>
+					<li class="b_write_c" style="min-height:400px"><textarea name="bContent" th:text="${board.bContent}"></textarea></li>
+					<li class="b_write_t">첨부파일</li>
+					<li class="b_write_c">			
+						<th:block th:if="${board.filepath != null}">
+							<div class="form-group">
+					        	<div class="custom-file img-div">
+					            	<input type="file" name="file" class="custom-file-input" th:value="${board.filename}">
+					                <label class="custom-file-label custom-file-label02" th:text="${not #strings.isEmpty(board.filename)} ? ${board.filename} : '상품이미지'"></label>
+					            </div>
+				            </div>
+					   		<!--img th:src="${board.filepath}" alt="이미지" class="b_view_c_img"-->
+					    </th:block>	
+						<th:block th:if="${board.filepath == null}">
+							<input type="file" name="file2">
+						</th:block>
+				    </li>		
+					<!--li class="b_write_t">첨부파일</li>
+					<li class="b_write_c"><input type="file" name="file"></li-->
+				</ul>
+				
+		   		<div class="page_box">
+					<div class="Btn btn_left"><a href="javascript:history.back();">뒤로가기</a></div>
+			   		<button type="submit" class="Btn">수정</button>
+			   	</div>
+			   	
+			</form>
+		</div>
+	</div>
+</html>

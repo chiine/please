@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{layouts/layout1}">
+
+	<div layout:fragment="content">
+		<div id="inwrap02">
+			<div class="p_title"><img src="/img/pet_icon13.png">게시판</div>
+			<table class="table01">
+				<colgroup>
+					<col />
+					<col width="10%" />
+					<col width="24%" />
+				</colgroup>
+				<thead>      
+			        <tr>
+			            <th>제목</th>
+			            <th>작성자</th>
+			            <th>등록일</th>
+			        </tr>	
+		      	</thead>
+		      	<tbody>
+					<tr th:each="board : ${boardList}">
+		                <td style="text-align:left;padding:0 15px">
+		                	<a class="td_list_title" th:href="@{/board/view/{boardId}(boardId = ${board.id})}">[[${board.bTitle}]]</a>
+		                </td>
+		                <td th:text="${board.createdBy}"></td>		                
+		                <td th:text="${#temporals.format(board.bRegDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+		           	</tr>
+		        </tbody>
+			</table>
+		   	<div class="Btn Btn_R" sec:authorize="isAuthenticated()">
+		    	<a href="/board/write">글쓰기</a>
+		   	</div>
+		   	
+		   	<div class="page_box">
+				<th:block th:each="page : ${#numbers.sequence(startPage, endPage)}">
+					<a th:if="${page != nowPage}" th:href="@{/board/list(page = ${page -1})}" th:text="${page}"></a>
+					<span th:if="${page == nowPage}" th:text="${page}"></span>
+				<th:block>
+			</div>
+		</div>
+	</div>
+</html>

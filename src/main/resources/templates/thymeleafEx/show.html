@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>회원가입</title>
+</head>
+<body>
+	<h3>회원 가입</h3>
+	<p> 아이디 : <th:block th:text="${jmDto.id}"></th:block></p>
+	<p> 비밀번호 : <th:block th:text="${jmDto.passwd}"></th:block></p>
+	<p> 이름 : <th:block th:text="${jmDto.name}"></th:block></p>
+	<p> 주소 : <th:block th:text="${jmDto.addr}"></th:block></p>
+</body>
+</html>

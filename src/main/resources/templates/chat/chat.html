@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<th:block layout:fragment="style">
+	<style>
+		* {margin:0;padding:0;}
+		.container{width: 500px;margin: 0 auto;padding: 25px;}
+		.container h1{text-align: left;padding: 5px 5px 5px 15px;color: #FFBB00;border-left: 3px solid #FFBB00;
+					  margin-bottom: 20px;}
+		
+	</style>
+</th:block>
+
+<th:block layout:fragment="script">
+	<script type="text/javascript">
+		var ws;
+		
+		function wsOpen(){
+			//웹소켓 전송시 현재 방의 번호를 넘겨서 보낸다.
+			ws = new WebSocket("ws://" + location.host + "/chating/"+$("#roomNumber").val());
+			wsEvt();
+		}
+			
+		function wsEvt() {
+			ws.onopen = function(data){
+				//소켓이 열리면 동작
+			}
+			
+			ws.onmessage = function(data) {
+				//메시지를 받으면 동작
+				var msg = data.data;
+				if(msg != null && msg.type != ''){
+					//파일 업로드가 아닌 경우 메시지를 뿌려준다.
+					var d = JSON.parse(msg);
+					if(d.type == "getId"){
+						var si = d.sessionId != null ? d.sessionId : "";
+						if(si != ''){
+							$("#sessionId").val(si); 
+						}
+					}else if(d.type == "message"){
+						if(d.sessionId == $("#sessionId").val()){
+							$("#chating").append("<div class='me'><span>나</span>" + "<p>" + d.msg + "</p></div>");	
+						}else{
+							$("#chating").append("<div class='others'><img src='/img/pet_icon16.png'><span style='display:inline-block;'>" + d.userName + "</span><p>" + d.msg + "</p></div>");
+						}
+							
+					}else{
+						console.warn("unknown type!")
+					}
+				}else{
+					//파일 업로드한 경우 업로드한 파일을 채팅방에 뿌려준다.
+					var url = URL.createObjectURL(new Blob([msg]));
+					$("#chating").append("<div class='img'><img class='msgImg' src="+url+"></div><div class='clearBoth'></div>");
+				}
+			}
+	
+			document.addEventListener("keypress", function(e){
+				if(e.keyCode == 13){ //enter press
+					send();
+				}
+			});
+		}
+	
+		function chatName(){
+			var userName = $("#userName").val();
+			if(userName == null || userName.trim() == ""){
+				alert("사용자 이름을 입력해주세요.");
+				$("#userName").focus();
+			}else{
+				wsOpen();
+				$("#yourName").hide();
+				$("#yourMsg").show();
+			}
+		} 
+	
+		function send() {
+			var option ={
+				type: "message",
+				roomNumber: $("#roomNumber").val(),
+				sessionId : $("#sessionId").val(),
+				userName : $("#userName").val(),
+				msg : $("#chatting").val()
+			}
+			ws.send(JSON.stringify(option))
+			$('#chatting').val("");
+		}
+		
+	</script>
+</th:block>
+
+<div layout:fragment="content">
+	<div id="inwrap02">
+		<div class="p_title"><img src="/img/pet_icon13.png">익명채팅 - [[${roomName}]]의 채팅방</div>
+		<input type="hidden" id="sessionId" value="">
+		<input type="hidden" id="roomNumber" th:value="${roomNumber}">
+		<div id="chating" class="chating"></div>
+		
+		<div class="chat_roombox02">
+			<div id="yourName" class="chat_room" style="margin-top:10px">
+				<span>사용자명</span><input type="text" name="userName" id="userName" style="width:950px;">
+				<button onclick="chatName()" id="startBtn" class="Btn btn_chatroom"><i class="fas fa-plus"></i> 이름 등록</button>
+			</div>
+			
+			<div id="yourMsg" class="chat_room" style="margin-top:10px">
+				<span>메시지</span><input id="chatting" placeholder="보내실 메시지를 입력하세요." style="width:950px;">
+				<button onclick="send()" id="sendBtn" class="Btn btn_chatroom"><i class="fas fa-paper-plane"></i> 보내기</button>
+			</div>
+		</div>		
+	</div>
+</div>
+</html>

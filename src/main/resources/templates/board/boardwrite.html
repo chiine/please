@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{layouts/layout1}">
+	   
+	<div layout:fragment="content">
+		<div id="inwrap02">
+			<div class="p_title"><img src="/img/pet_icon13.png">게시판 글쓰기</div>
+			<form action="/board/writePro" method="post" enctype="multipart/form-data" th:object="${BoardDto}">
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+				<ul class="b_write">
+					<li class="b_write_t">제목</li>
+					<li class="b_write_c">
+						<input th:field="*{bTitle}" type="text" required="true">						
+						<p th:if="${#fields.hasErrors('bTitle')}" th:errors="*{bTitle}">Incorrect data</p>
+					</li>
+					<li class="b_write_t">내용</li>
+					<li class="b_write_c" style="min-height:400px"><textarea name="bContent"></textarea></li>					
+					<li class="b_write_t">첨부파일</li>
+					<li class="b_write_c"><input type="file" name="file"></li>
+				</ul>
+								
+				<div class="Btn_box">
+					<button class="Btn btn_left" type="submit">작성완료</button>
+					<div class="Btn btn_back"><a href="javascript:history.back();">뒤로가기</a></div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+</html>

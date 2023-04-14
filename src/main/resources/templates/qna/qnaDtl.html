@@ -1,0 +1,32 @@
+<!-- QNA 상세 페이지 -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<div layout:fragment="content">
+	<div id="inwrap02">
+		<div class="p_title"><img src="/img/pet_icon13.png">1:1 문의내역</div>
+		<div class="b_view">
+			<code class="meet_count"><span>[[${qnaDto.qnaNm}]] 문의</span></code>
+	    		
+	    	<div class="b_view_t">
+	    		<span class="td_view_title" th:text="${qnaDto.title}"></span> 
+	    	</div>
+	    	
+	    	<div class="b_view_c">
+		        <p th:text="${qnaDto.content}"></p>
+			</div>
+        </div>
+        
+		<div class="admin_box">
+			<p class="admin_box_name"><i class="fas fa-comment"></i> 관리자님의 답변</p>
+			[[${qnaDto.reply == null} ? '아직 답변이 등록되지 않았습니다.' : ${qnaDto.reply}]]
+		</div>      
+								
+		<div class="Btn_box02">
+			<div class="Btn" onclick="history.back()">목록보기</div>
+		</div>
+    </div>
+</div>
+</html>

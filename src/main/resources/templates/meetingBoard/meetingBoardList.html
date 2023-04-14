@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout1}">
+
+<th:block layout:fragment="script">
+	<script th:inline="javascript">
+		$(document).ready(function(){
+			$("#searchBtn").on("click",function(e){
+				e.preventDefault();
+				page(0);
+			});
+		});
+		
+		function page(page){
+			var searchBy = $("#searchBy").val();
+			var searchQuery = $("#searchQuery").val();
+			
+			location.href="/meeting/list/" + page + "?searchBy=" + searchBy
+								+"&searchQuery=" + searchQuery;
+		}
+		
+	</script>
+</th:block>	
+
+<div layout:fragment="content">
+	<div id="inwrap02">
+		<div class="p_title"><img src="/img/pet_icon13.png">모임 게시판</div>
+		<div class="item_search" th:object="${memberSearchDto}" style="margin-bottom:30px;">
+			<select th:field="*{searchBy}" class="item_search_sel">
+				<option value="title">제목</option>
+				<option value="meetingAdr">지역</option>
+			</select>
+			
+			<input th:field="*{searchQuery}" type="text" class="item_search_box" placeholde="검색어를 입력해주세요">
+			<button id="searchBtn" type="submit" class="Btn" style="width:60px">검색</button>
+		</div>
+		
+		<table class="table01">
+			<colgroup>
+				<col />
+				<col width="10%" />
+				<col width="10%" />
+				<col width="10%" />
+				<col width="15%" />
+				<col width="10%" />
+			</colgroup>
+			<thead>      
+		        <tr>
+		            <th>제목</th>
+		       		<th>지역</th>
+		            <th>모집인원</th>
+		        	<th>작성자</th>
+		            <th>등록일</th>
+		            <th>상태</th>
+
+		        </tr>	
+	      	</thead>
+	      	<tbody>
+				<tr th:each="list,status: ${list}">
+	                <td style="text-align:left;padding:0 15px;"><a th:href="@{/meeting/view/{meetingId}(meetingId = ${list.id})}" >[[${list.title}]]</a></td>
+	                <td th:text="${list.meetingAdr}"></td>
+	                <td th:text="${list.meetingCount}"></td> 	
+					<td th:text="${list.meetingWriter}"></td>
+					<td th:text="${#temporals.format(list.meetingUploadDate, 'yyyy-MM-dd HH:mm' )}"></td>
+					<td>
+						<span th:if="${list.finish} == 'finish' ">모집완료</span>
+						<span th:unless="${list.finish} == 'finish' ">모집중</span>
+					</td>
+	           	</tr>
+	        </tbody>
+		</table>
+		<a type="button" class="Btn Btn_R" href="/meeting/new" sec:authorize="isAuthenticated()">등록하기</a>
+		
+		<form th:action="@{'/meeting/list/' + ${list.number}}" role="form" method="get" th:object="${list}">
+			<div th:with="start=${(list.number/maxPage)*maxPage +1},
+				end=(${(list.totalPages==0) ? 1 : (start + (maxPage - 1)
+				<list.totalPages ? start + (maxPage -1) : list.totalPages)})" >
+				<ul class = "pagination justify-content-center">
+					
+					<li class ="page-item" th:classappend="${list.first}?'disabled'">
+						<a th:onclick="'javascript:page('+ ${list.number-1} + ')'" aria-label='Previous' class="page-link">
+							<span aria-hidden='true'>Previous</span>
+						</a>
+					</li>
+					
+					<li class="page-item" th:each="page:${#numbers.sequence(start, end)}" th:classappend="${list.number eq page-1}?'active' : ''">
+						<a th:onclick="'javascript:page(' + ${page-1} + ')'" th:inline="text" class="page-link">[[${page}]]</a>
+					</li>
+					
+	 				<li class="page-item" th:classappend="${list.last}?'disabled'">
+						 <a th:onclick="'javascript:page(' + ${list.number + 1} + ')'" aria-label='Next' class="page-link">
+							 <span aria-hidden = 'true'>Next</span>
+						 </a>
+	 				</li>
+				</ul>
+			</div>
+			
+			
+		</form>
+	</div>
+</div>
+	
+	

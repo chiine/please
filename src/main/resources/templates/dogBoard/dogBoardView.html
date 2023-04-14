@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<form xmlns:th="http://www.thymeleaf.org"
+ 	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/layout1}">
+
+<div layout:fragment="content">
+	<form role="form" method="get" enctype="multipart/form-data" th:object="${dog}">
+
+	<div th:each ="dogImg :${dog.dogImgDtoList}" class="text-center">
+		<img th:src="${dogImg.imgUrl}" width="600">
+	</div>
+	<div style="text-align: center;">
+	<p th:text = "${dog.name}"></p>
+	<p><span th:Text="${dog.age}"></span>살</p>
+	<p th:if="${dog.gender == 'MALE'}">남자</p>
+	<p th:unless="${dog.gender == 'MALE'}">여자</p>
+	<p th:Text="${dog.dogType}"></p>
+	<p th:Text="${dog.content}"></p>
+	
+	</div>
+	
+	
+	<div style="text-align:center">
+		<button th:formaction="@{'/Dboard/modify/' + ${dog.id}}"  type="submit" class="btn btn-primary">수정</button>
+		<button type="button" class="btn btn-primary" onClick="location.href='http://localhost:8505/Dboard/list'">목록</button>
+		</div>
+		
+	
+		
+		<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+	</form>
+	</div>
+	
+	
+</html>

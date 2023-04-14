@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+</head>
+
+<th:block layout:fragment="script">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script th:inline="javascript">
+	   var ws;
+	   
+	   window.onload = function(){
+	      getRoom();
+	      createRoom();
+	   }
+	
+	   function getRoom(){
+	      commonAjax('/getRoom', "", 'post', function(result){
+	         
+	         createChatingRoom(result);
+	      });
+	   }
+	   
+	   function createRoom(){
+	      $("#createRoom").click(function(){
+	         var msg = {   roomName : $('#roomName').val()   };
+	
+	         commonAjax('/createRoom', msg, 'post', function(result){
+	            createChatingRoom(result);
+	         });
+	
+	         $("#roomName").val("");
+	      });
+	   }
+	
+	   function goRoom(number, name){
+	      location.href="/moveChating?roomName="+name+"&"+"roomNumber="+number;
+	   }
+	
+	   function createChatingRoom(res){
+	      if(res != null){
+	         //var tag = "<li class='chat_title'><span class='num'>순서</span><span class='room'>방 이름</span><span class='go'>참여</span></li>";
+	         var tag = "";
+	         res.forEach(function(d, idx){
+	            var rn = d.roomName.trim();
+	            var roomNumber = d.roomNumber;
+	            tag += "<li>"+
+	                     "<span class='num'>"+(idx+1)+"</span>"+
+	                     "<span class='room'>"+ rn +"</span>"+
+	                     "<span class='go'><button class='Btn Btn02 btn_chat' type='button' onclick='goRoom(\""+roomNumber+"\", \""+rn+"\")'><i class='fas fa-comments'> 참여</i></button></span>" +
+	                  "</li>";   
+	         });
+	         $("#roomList").empty().append(tag);
+	      }
+	   }
+	
+	   function commonAjax(url, parameter, type, calbak, contentType){
+	       var token = $("meta[name='_csrf']").attr("content");
+	         var header = $("meta[name='_csrf_header']").attr("content");
+	            
+	      $.ajax({
+	         url: url,
+	         data: parameter,
+	         type: type,
+	         beforeSend : function(xhr){
+	                /* 데이터를 전송하기 전에 헤더에 csrf값을 설정 */
+	                xhr.setRequestHeader(header, token);
+	            },
+	         contentType : contentType!=null?contentType:'application/x-www-form-urlencoded; charset=UTF-8',
+	         success: function (res) {
+	            calbak(res);
+	         },
+	         error : function(err){
+	            console.log('error');
+	            calbak(err);
+	         }
+	      });
+	   }
+	</script>
+</th:block>
+
+<div layout:fragment="content">
+	<div id="inwrap02">
+		<div class="p_title"><img src="/img/pet_icon13.png">익명채팅</div>
+		<div class="chat_roombox">
+			<div class="chat_room">
+				<span>방 제목</span><input type="text" name="roomName" id="roomName">
+				<button id="createRoom" class="Btn btn_chatroom"><i class="fas fa-plus"></i> 방 만들기</button>
+				
+				<div class="chat_room_t">
+					<code><i class="fas fa-exclamation"></i> 본 채팅방은 <span>익명</span>을 기반으로 이용하실 수 있는 <span>익명 채팅 서비스</span>입니다.</code>
+					<p>1. 원하시는 채팅방 <span>이름을 정하여 입력</span> 후 방 만들기 버튼을 누르시면 익명의 채팅방이 <span>생성</span>됩니다.</p>
+					<p>2. 하단에 생성된 채팅방의 <span>참여 버튼</span>을 클릭하여 해당 채팅방에 접속합니다.</p>
+					<p>3. 먼저 사용자의 이름을 입력하시어 <span>익명의 계정</span>을 생성합니다.</p>
+					<p>4. 생성된 익명의 계정으로 채팅에 <span>참여</span>하세요.</p>
+					<img src="/img/pet_img07.png" class="chat_room_img">
+				</div>
+			</div>
+		</div>
+		
+		<div id="roomContainer" class="chat_box">
+			<ul id="roomList" class="chat_ul"></ul>
+		</div>
+		
+		
+		
+   </div>
+</div>
+</html>

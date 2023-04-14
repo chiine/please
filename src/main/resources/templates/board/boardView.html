@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{layouts/layout1}">
+	<head>
+		<meta name="_csrf" th:content="${_csrf.token}" />
+		<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+	</head>
+   
+	<div layout:fragment="content">
+		<div id="inwrap02">
+			<div class="p_title"><img src="/img/pet_icon13.png">게시판</div>						
+			<div class="b_view">
+		    	<div class="b_view_t">
+		    		<span class="td_view_title" th:text="${board.bTitle}"></span>
+		    		<span style="float:right;font-size:14px;" th:text="${#temporals.format(board.bRegDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+		    		<span th:text="${board.createdBy}" class="b_writer"></span>
+		    	</div>
+		    	<div class="b_view_c">
+			        <p th:text="${board.bContent}"></p>
+			        <th:block th:if="${board.filepath != null}">
+			        	<img th:src="${board.filepath}" alt="이미지" class="b_view_c_img">            	
+					</th:block>
+				</div>
+	        </div>       
+								
+			<div class="Btn_box02">
+		        <th:block th:if="${board.filepath != null}">
+					<a class="Btn Btn02 Btn_L btn_left" th:href="@{${board.filepath}}">이미지 받기</a>
+				</th:block>
+				<div class="Btn Btn02 Btn_L btn_left" onclick="history.back()">뒤로가기</div>
+				<div class="Btn Btn02 Btn_L btn_left"><a href="/board/list">목록보기</a></div>
+		        <span th:if="${#authentication.name == board.createdBy}">
+					<a class="Btn btn_left" th:href="@{/board/modify/{id}(id=${board.id})}">수정</a>
+		        	<button type="button" onclick="boardDelete();" class="Btn">삭제</button>
+		        </span>
+			</div>
+	 		
+	 		
+		    <div id="pagination">
+				<h4 class="mb-4"><i class="fas fa-comment"></i> 댓글</h4>
+				
+				<div class="card my-4" style="border-radius:10px;">
+					<div class="card-body">
+						<textarea name="content" class="comment_write" rows="3" id="content"></textarea>
+						<input type="hidden" id="boardId" th:value="${board.id}">
+						<button type="button" class="Btn Btn04" onclick="commentInsert()">Submit</button>
+					</div>
+				</div>
+				
+				
+				<div th:each="comment : ${comment.getContent()}">
+					<div class="comment_box">
+						<div class="comment_text">
+							<h2 th:text="${comment.createdBy}" id="writer"></h2>
+							<!--h2 th:text="${comment.idx}"></h2-->
+							<span th:text="${#temporals.format(comment.regTime, 'yyyy-MM-dd hh:mm')}" id="checkDate"></span>
+							<p th:text="${comment.content}" th:id="'spanContent' + ${comment.idx}"></p>
+							<p><input th:id="'input' + ${comment.idx}" style="display:none;" class="form-control"></p>
+						</div>
+				
+						<div th:if="${#authentication.name == comment.createdBy}" class="comment_btnbox">
+							<button type="button" class="btn btn-outline-primary btn-sm Btn03" th:id="'Modify'+ ${comment.idx}"
+									th:data-idx="${comment.idx}" style="margin-top: 10px; margin-right: 5px;">수정</button>
+							<button type="button" class="btn btn-outline-success btn-sm Btn03" th:id="'Update'+ ${comment.idx}"
+								th:data-idx="${comment.idx}"
+								style="display:none; margin-top: 10px; margin-right: 5px;">완료</button>
+							<button type="button" class="btn btn-outline-danger btn-sm Btn03" th:id="'Delete'+ ${comment.idx}"
+								th:data-idx="${comment.idx}" style="margin-top: 10px;">삭제</button>
+						</div>		
+					</div>		
+				</div>		
+			</div>
+			
+			<div th:with="start=${(comment.number/maxPage)*maxPage + 1}, end=(${(comment.totalPages == 0) ? 1 : (start + (maxPage - 1) < comment.totalPages ? start + (maxPage - 1) : comment.totalPages)})">
+				<ul class="pagination justify-content-center">		
+					<li class="page-item" th:classappend="${comment.first}?'disabled'">
+						<a th:onclick="'javascript:page(' + ${comment.number - 1} + ')'" aria-label='Previous' class="page-link"
+							id="target1"><span aria-hidden='true'>Prev</span></a>
+					</li>		
+					<li class="page-item" th:each="page: ${#numbers.sequence(start, end)}"
+						th:classappend="${comment.number eq page-1}?'active':''">
+						<a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link"
+							id="target2">[[${page}]]</a>
+					</li>		
+					<li class="page-item" th:classappend="${comment.last}?'disabled'">
+						<a th:onclick="'javascript:page(' + ${comment.number + 1} + ')'" aria-label='Next' class="page-link"
+							id="target3">
+							<span aria-hidden='true'>Next</span>
+						</a>
+					</li>		
+				</ul>
+			</div>		
+		
+			
+			
+		</div>
+    </div>
+    
+    <th:block layout:fragment="script">
+       <script th:inline="javascript">
+		   
+		$(document).ready(function () {
+
+
+			$("[id^='Modify']").on("click", function () {
+				console.log($(this).data("idx"));
+				$("#spanContent" + $(this).data("idx")).toggle();
+				var content = $("#spanContent" + $(this).data("idx")).text();
+
+
+
+				$("#input" + $(this).data("idx")).toggle().val(content);
+
+
+				if ($("#Update" + $(this).data("idx")).is(':visible') == false) {
+					$("#Update" + $(this).data("idx")).show();
+				} else {
+					$("#Update" + $(this).data("idx")).hide();
+				}
+
+
+
+
+			});
+			
+			function page(page) {
+			var boardId = $("#boardId").val();
+			console.log(boardId);
+
+			location.href = "/board/view/" + boardId + "/" + page;
+			location.href = "#pagination";
+		}
+
+
+			// 업데이트 버튼 클릭시 글 수정됨
+			$("[id^='Update']").on("click", function () {
+				console.log($("#input" + $(this).data("idx")));
+				console.log($("#input" + $(this).data("idx")).val());
+				console.log($("#input" + $(this).data("idx")).val(), typeof value);
+				var checkVal = $("#input" + $(this).data("idx")).val();
+				if (checkVal == undefined || checkVal == null || checkVal == "") {
+					console.log($("#input" + $(this).data("idx")).val());
+					alert("댓글을 작성해주세요.");
+					return false;
+				}
+
+				console.log($(this).data("idx"));
+				var boardId = $("#boardId").val();
+				var idx = $(this).data("idx");
+				var content = $("#input" + $(this).data("idx")).val();
+				location.href = "/comment/update/" + idx + "/" + content + "/" + boardId;
+
+			});
+
+
+
+			// 삭제 버튼 클릭시 삭제됨
+			//  만들꺼 (댓글 삭제 할껀지 알림창 띄워주기)
+			$("[id^='Delete']").on("click", function () {
+
+				var token = $("meta[name='_csrf']").attr("content");
+				var header = $("meta[name='_csrf_header']").attr("content");
+				var idx = $(this).data("idx");
+				var boardId = $("#boardId").val();
+				// location.href = "/comment/delete/" + idx;
+
+				var url = "/comment/delete";
+
+				// 삭제기능 ajax 로 바꿀꺼임
+
+				$.ajax({
+					url: url,
+					type: "POST",
+					data: {
+						idx: idx
+					},
+					beforeSend: function (xhr) {
+						xhr.setRequestHeader(header, token);
+					},
+					dataType: "text",
+					cache: false,
+					success: function (result, status) {
+						alert("댓글 삭제 성공");
+						location.href = '/board/view/' + boardId;
+
+					},
+					error: function (jqXHR, status, error) {
+						if (jpXHR.status == '401') {
+							alert('로그인 후 이용해주세요');
+							location.href = '/members/login';
+						} else {
+							alert(jqXHR.responseText);
+						}
+					}
+
+				});
+
+			});
+
+		});
+		
+		function page(page) {
+			var boardId = $("#boardId").val();
+			console.log(boardId);
+
+			location.href = "/board/view/" + boardId + "/" + page;
+			location.href = "#pagination";
+		}
+
+		function scrollerTest() {
+			document.querySelector("#pagination")
+			let location = document.querySelector("#pagination").offsetTop;
+			window.scrollTo({top: location, behavior: "smooth"});
+
+		}
+
+		
+		function commentInsert() {
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+
+			var url = "/board/comment/write";
+			
+			
+			
+			
+			var boardId = $("#boardId").val();
+			console.log($("#content").val());
+			
+
+			
+			$.ajax({
+				url: url,
+				type: "POST",
+				// contentType: "application/json",
+				data: {
+					content: $("#content").val(),
+					boardId: $("#boardId").val()
+				},
+				beforeSend: function (xhr) {
+					xhr.setRequestHeader(header, token);
+				},
+				dataType: "text",
+				cache: false,
+				success: function (result, status) {
+					alert("댓글이 저장되었습니다.");
+					location.href = '/board/view/' + boardId;
+
+				},
+				error: function (jqXHR, status, error) {
+					if (jqXHR.status == '401') {
+						alert('로그인 후 이용해주세요');
+						location.href = '/members/login';
+					}
+				}
+
+			});
+		}
+		
+		   
+         function boardDelete() {
+            const id = [[${board.id}]];
+            if( !confirm(id + '번 게시글을 삭제할까요?')) {
+               return false;
+            }
+            const formHtml = `
+                     <form id="deleteForm" action="/board/delete" method="post">
+                   <input type="hidden" name=[[${_csrf.parameterName}]] value=[[${_csrf.token}]]>
+                       <input type="hidden" id = "id" name = "id" value = "${id}" />
+                  </form>
+               `;
+               const doc = new DOMParser().parseFromString(formHtml, 'text/html');
+               const form = doc.body.firstChild;
+               document.body.append(form);
+               document.getElementById('deleteForm').submit();
+            }
+                     
+        </script>
+   </th:block>
+   
+   
+   
+
+   
+   
+</html>

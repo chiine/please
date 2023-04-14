@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+     layout:decorate="~{layouts/layout1}">
+	<head>
+		<meta name="_csrf" th:content="${_csrf.token}" />
+		<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+	</head>
+   
+	<div layout:fragment="content">
+		<div id="inwrap02">
+			<div class="p_title"><img src="/img/pet_icon13.png">공지사항</div>
+			<div class="b_view">
+		    	<div class="b_view_t">
+		    		<span class="td_view_title" th:text="${notice.nTitle}"></span> 
+		    		<span style="float:right;font-size:14px;" th:text="${#temporals.format(notice.nRegDate, 'yyyy-MM-dd HH:mm:ss')}"></span>
+		    		<span th:text="${notice.createdBy}" class="b_writer"></span>
+		    	</div>
+		    	
+		    	<div class="b_view_c">
+			        <p th:text="${notice.nContent}"></p>
+			        <th:block th:if="${notice.filepath != null}">
+			        	<img th:src="${notice.filepath}" alt="이미지" class="b_view_c_img">            	
+					</th:block>
+				</div>
+	        </div>    
+	         			
+			<div class="Btn_box02" style="display:inline-block;width:auto;">
+				<div class="Btn Btn02 Btn_L btn_left"><a href="/notice/list">목록보기</a></div>
+			</div>
+			<div class="Btn_box04" sec:authorize="hasAnyAuthority('ROLE_ADMIN')" aria-current="page">
+		       	<a class="Btn Btn02 btn_left" th:href="@{/notice/modify/{id}(id=${notice.id})}">수정</a>
+		       	<button class="Btn Btn02 btn_left" onclick="noticeDelete();">삭제</button>
+			</div>
+	 		
+			
+			<div th:with="start=${(comment.number/maxPage)*maxPage + 1}, end=(${(comment.totalPages == 0) ? 1 : (start + (maxPage - 1) < comment.totalPages ? start + (maxPage - 1) : comment.totalPages)})">
+				<ul class="pagination justify-content-center">		
+					<li class="page-item" th:classappend="${comment.first}?'disabled'">
+						<a th:onclick="'javascript:page(' + ${comment.number - 1} + ')'" aria-label='Previous' class="page-link"
+							id="target1"><span aria-hidden='true'>Prev</span></a>
+					</li>		
+					<li class="page-item" th:each="page: ${#numbers.sequence(start, end)}"
+						th:classappend="${comment.number eq page-1}?'active':''">
+						<a th:onclick="'javascript:page(' + ${page - 1} + ')'" th:inline="text" class="page-link"
+							id="target2">[[${page}]]</a>
+					</li>		
+					<li class="page-item" th:classappend="${comment.last}?'disabled'">
+						<a th:onclick="'javascript:page(' + ${comment.number + 1} + ')'" aria-label='Next' class="page-link"
+							id="target3">
+							<span aria-hidden='true'>Next</span>
+						</a>
+					</li>		
+				</ul>
+			</div>		
+		
+			
+			
+		</div>
+    </div>
+    
+    <th:block layout:fragment="script">
+       <script th:inline="javascript">
+		   
+		$(document).ready(function () {
+
+
+			$("[id^='Modify']").on("click", function () {
+				console.log($(this).data("idx"));
+				$("#spanContent" + $(this).data("idx")).toggle();
+				var content = $("#spanContent" + $(this).data("idx")).text();
+
+
+
+				$("#input" + $(this).data("idx")).toggle().val(content);
+
+
+				if ($("#Update" + $(this).data("idx")).is(':visible') == false) {
+					$("#Update" + $(this).data("idx")).show();
+				} else {
+					$("#Update" + $(this).data("idx")).hide();
+				}
+				
+				
+			});
+
+
+			
+			function page(page) {
+			var noticeId = $("#noticeId").val();
+			console.log(noticeId);
+
+			location.href = "/notice/view/" + noticeId + "/" + page;
+			location.href = "#pagination";
+		}
+
+
+			// 업데이트 버튼 클릭시 글 수정됨
+			$("[id^='Update']").on("click", function () {
+				console.log($("#input" + $(this).data("idx")));
+				console.log($("#input" + $(this).data("idx")).val());
+				console.log($("#input" + $(this).data("idx")).val(), typeof value);
+				var checkVal = $("#input" + $(this).data("idx")).val();
+				if (checkVal == undefined || checkVal == null || checkVal == "") {
+					console.log($("#input" + $(this).data("idx")).val());
+					alert("댓글을 작성해주세요.");
+					return false;
+				}
+
+				console.log($(this).data("idx"));
+				var noticeId = $("#noticeId").val();
+				var idx = $(this).data("idx");
+				var content = $("#input" + $(this).data("idx")).val();
+				location.href = "/comment/update/" + idx + "/" + content + "/" + noticeId;
+
+			});
+			
+			// 삭제 버튼 클릭시 삭제됨
+			//  만들꺼 (댓글 삭제 할껀지 알림창 띄워주기)
+			$("[id^='Delete']").on("click", function () {
+
+				var token = $("meta[name='_csrf']").attr("content");
+				var header = $("meta[name='_csrf_header']").attr("content");
+				var idx = $(this).data("idx");
+				var boardId = $("#boardId").val();
+				// location.href = "/comment/delete/" + idx;
+
+				var url = "/comment/delete";
+
+				// 삭제기능 ajax 로 바꿀꺼임
+
+				$.ajax({
+					url: url,
+					type: "POST",
+					data: {
+						idx: idx
+					},
+					beforeSend: function (xhr) {
+						xhr.setRequestHeader(header, token);
+					},
+					dataType: "text",
+					cache: false,
+					success: function (result, status) {
+						alert("댓글 삭제 성공");
+						location.href = '/board/view/' + boardId;
+
+					},
+					error: function (jqXHR, status, error) {
+						if (jpXHR.status == '401') {
+							alert('로그인 후 이용해주세요');
+							location.href = '/members/login';
+						} else {
+							alert(jqXHR.responseText);
+						}
+					}
+
+				});
+
+			});
+
+		});
+
+
+
+		
+		function page(page) {
+			var noticeId = $("#noticeId").val();
+			console.log(noticeId);
+
+			location.href = "/notice/view/" + noticeId + "/" + page;
+			location.href = "#pagination";
+		}
+
+		function scrollerTest() {
+			document.querySelector("#pagination")
+			let location = document.querySelector("#pagination").offsetTop;
+			window.scrollTo({top: location, behavior: "smooth"});
+
+		}
+
+		
+		
+		
+		   
+         function noticeDelete() {
+            const id = [[${notice.id}]];
+            if( !confirm(id + '번 게시글을 삭제할까요?')) {
+               return false;
+            }
+            const formHtml = `
+                     <form id="deleteForm" action="/notice/delete" method="post">
+                   <input type="hidden" name=[[${_csrf.parameterName}]] value=[[${_csrf.token}]]>
+                       <input type="hidden" id = "id" name = "id" value = "${id}" />
+                  </form>
+               `;
+               const doc = new DOMParser().parseFromString(formHtml, 'text/html');
+               const form = doc.body.firstChild;
+               document.body.append(form);
+               document.getElementById('deleteForm').submit();
+            }
+                     
+        </script>
+   </th:block>
+   
+   
+   
+
+   </html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+	<header th:fragment="header">
+		<div id="inwrap" style="position:relative">
+			<div class="p_logo">
+				<a th:href="@{/}"><img th:src="@{/img/logo06.png}" alt="LOGO"></a>
+			</div>
+		    <ul class="mini_nav">
+				<li sec:authorize="isAnonymous()" onclick="location.href='/members/login'">로그인</li>
+				<li sec:authorize="isAnonymous()" onclick="location.href='/members/new'">회원가입</li>
+				
+	            <li sec:authorize="isAuthenticated()">            <span th:if="${#strings.contains(#authentication.name,'@')}" th:text="${#strings.substringBefore(#authentication.name, '@')}"></span>
+                  <span th:unless="${#strings.contains(#authentication.name, '@')}" th:text="${#authentication.name}"></span> 님
+               </li> 
+				<li sec:authorize="hasRole('ADMIN')" onClick="location.href='/admin/item/new'">관리자설정</li>
+	            <li sec:authorize="hasRole('USER')" onclick="location.href='/cart'">장바구니</li>
+	            <li sec:authorize="hasRole('USER')" onclick="location.href='/members/mypage'">마이페이지</li>
+                <li sec:authorize="isAuthenticated()" onclick="location.href='/members/logout'">로그아웃</li>
+                <li sec:authorize="hasRole('USER')" onClick="location.href='/qna/list'">고객센터</li>
+			</ul>
+		    <ul class="p_nav">
+				<li onclick="location.href='/notice/list'">공지사항</li>
+          	    <li onclick="location.href='/store'">스토어</li> 
+          	    <li onclick="location.href='/chatpage'">채팅방</li>    
+                <li onclick="location.href='/meeting/list'">반려견자랑&모임 게시판</li>
+                <li onclick="location.href='/board/list'">수다게시판</li>
+                          
+		    </ul>
+	    </div>
+	    <div class="top_notice">
+			<div class="inwrap">
+				<MARQUEE class="top_notice_t" scrollamount="10">
+					<img src="/img/pet_icon08.png"> 견주라면 반드시 알아야 하는 공장 간식과 수제 간식의 차이! 나의 사랑하는 반려견을 위한 수제 간식! 댕댕챱챱과 함께하세요! <img src="/img/pet_icon08.png">
+				</MARQUEE>
+			</div>
+		</div>
+		
+		
+	</header>
+	
+</html>

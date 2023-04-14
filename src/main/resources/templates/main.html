@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout1}">
+
+<div layout:fragment="content">
+	<div class="main_ban">
+		<div id="inwrap" style="position:relative;">
+			<!--div class="main_ban_box">
+				<p>우리 댕댕이 수제간식</p>
+				<span>구경하러 가기<img src="/img/pet_icon01.png"></span>
+			</div-->
+		</div>		
+	</div>
+	<div id="inwrap">
+		<div class="main_item_box">상품 준비중 :)</div>
+		
+		<ul class="main_count">
+		  <li>
+		    <span class="number">861,983</span> 개
+		    <p>누적 판매량</p>
+		  </li>
+		  <li>
+		    <span class="number">27,596,367</span> 명
+		    <p>누적 방문자수</p>
+		  </li>
+		  <li>
+		    <span class="number">94</span> %
+		    <p>구매회원 재구매율</p>
+		  </li>
+		</ul>
+		<script>
+			$(function() {
+			  var count0 = 861200;
+			  var count1 = 27595500;
+			  var count2 = 60;			
+			  timeCounter();
+			
+			  function timeCounter() {			
+			    id0 = setInterval(count0Fn, 1);			
+			    function count0Fn() {
+			      count0++;
+			      if (count0 > 861983) {
+			        clearInterval(id0);
+			      } else {
+			        $(".number").eq(0).text(count0);
+			      }
+			    }
+
+			    id1 = setInterval(count1Fn, 1);
+			    function count1Fn() {
+			      count1++;
+			      if (count1 > 27596367) {
+			        clearInterval(id1);
+			      } else {
+			        $(".number").eq(1).text(count1);
+			      }
+			    }
+			
+			    id2 = setInterval(count2Fn, 100);			
+			    function count2Fn() {
+			      count2++;
+			      if (count2 > 94) {
+			        clearInterval(id2);
+			      } else {
+			        $(".number").eq(2).text(count2);
+			      }
+			    }
+			  }
+			});
+		</script>
+	</div>
+	<div id="inwrap">
+		<ul class="main_4btn">
+			<li>
+				<img src="/img/pet_icon02.png"><span>앱설치 10%쿠폰 혜택</span>
+				<p>힐링펫 앱 설치시</p>
+				<p>10%할인쿠폰 증정 (1인 1회 한정)</p>
+				<div class="hidden_cat"></div>
+			</li>
+			<li>
+				<img src="/img/pet_icon03.png"><span>아이스팩 할인혜택</span>
+				<p>힐링펫 앱을 통한 구매시 500원 할인</p>
+				<p>아이스팩 20개 반납시 적립금 5000원</p>
+				<div class="hidden_cat"></div>
+			</li>
+			<li>
+				<img src="/img/pet_icon04.png"><span>적립금 혜택</span>
+				<p>매달 추첨을 통해 구매금액의 10%를</p>
+				<p> 적립금으로 돌려드립니다.</p>
+				<div class="hidden_cat"></div>
+			</li>
+			<li>
+				<img src="/img/pet_icon05.png"><span>구매후기 혜택</span>
+				<p>리뷰 작성시 </p>
+				<p>10%할인쿠폰 증정 (1인 1회 한정)</p>
+				<div class="hidden_cat"></div>
+			</li>
+		</ul>
+			
+	</div>
+	<div class="main_imgt">
+		<div class="main_imgt_L"></div>
+		<div class="main_imgt_R">
+			<div data-aos="fade-left" data-aos-offset="200" data-aos-easing="ease-out-cubic" data-aos-duration="2000" >
+				<h2>14DAYS REVIEW EVENT</h2>
+				<h3>RESET,<br>14일의 기적을 보여주세요!</h3>
+				<p>댕댕챱챱을 만나고 달라진 강아지들의 일상을 공유해 주세요.</p>
+				<p>14일 급여 후기를 매일 연속으로 남겨주신 모든 분들께</p>
+				<p>수제 간식 구매금액 100%를 적립금으로 환급해 드립니다.</p>
+			</div>
+		</div>
+		<script> 
+            AOS.init(); // 자바스크립트로 init()을 해야 동작한다.
+        </script>
+	</div>
+</div>
