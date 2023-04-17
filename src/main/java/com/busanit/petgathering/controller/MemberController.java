@@ -7,6 +7,10 @@ import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,11 +21,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.busanit.petgathering.dto.MemberFormDto;
+import com.busanit.petgathering.entity.Board;
+import com.busanit.petgathering.entity.MeetingBoard;
 import com.busanit.petgathering.entity.Member;
 import com.busanit.petgathering.service.BoardService;
 import com.busanit.petgathering.service.MeetingBoardService;
 import com.busanit.petgathering.service.MemberService;
-import com.busanit.petgathering.util.CommonUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,19 +51,9 @@ public class MemberController {
     //마이페이지
     @GetMapping(value = "/mypage")
     public String myPage(Principal principal, Model model) {
-        MemberFormDto memberFormDto = memberService.getMypageList(CommonUtil.getId(principal.getName()));
+        MemberFormDto memberFormDto = memberService.getMypageList(principal.getName());
         model.addAttribute("memberFormDto", memberFormDto);
         return "member/myPage";
-    }
-
-
-    @GetMapping(value = "/user")
-    public String userDtl(Principal principal, Model model){
-
-        MemberFormDto memberFormDto = memberService.getMypageList(CommonUtil.getId(principal.getName()));
-        model.addAttribute("memberFormDto", memberFormDto);
-
-        return "member/userForm";
     }
 
     @GetMapping(value = "/{memberId}")
@@ -66,6 +61,7 @@ public class MemberController {
         try{
             MemberFormDto memberFormDto = memberService.getMemberDtl(memberId);
             model.addAttribute("memberFormDto", memberFormDto);
+            
         } catch (EntityNotFoundException e){
             model.addAttribute("errorMessage", "존재하지 않는 회원입니다.");
             model.addAttribute("memberFormDto", new MemberFormDto());
@@ -76,16 +72,47 @@ public class MemberController {
     @PostMapping(value = "/{memberId}")
     public String memberUpdate(@Valid MemberFormDto memberFormDto, BindingResult bindingResult,
                                Model model){
+    	 if(bindingResult.hasErrors()){
+             return "member/adminForm";
+         }
         try{
-
-            memberService.updateMember(memberFormDto);
+            memberService.updateMember(memberFormDto, passwordEncoder);
+            
         }catch (Exception e){
             model.addAttribute("errorMessage","회원정보 수정 중 에러가 발생하였습니다.");
             return "member/adminForm";
         }
-
+        model.addAttribute("message","회원정보 수정이 완료되었습니다.");
         return "redirect:/members/list";
+    }    
+    
+    @GetMapping(value = "/user")
+    public String userDtl(Principal principal, Model model){
+
+        MemberFormDto memberFormDto = memberService.getMypageList(principal.getName());
+        model.addAttribute("memberFormDto", memberFormDto);
+
+        return "member/userForm";
     }
+    
+  //회원정보 수정
+    @PostMapping(value = "/user/{memberId}")
+    public String memberUserUpdate(@Valid MemberFormDto memberFormDto, BindingResult bindingResult,
+                                   Model model){
+   	 if(bindingResult.hasErrors()){
+         return "member/userForm";
+     }
+        try{
+            memberService.updateMember(memberFormDto, passwordEncoder);
+            model.addAttribute("message", "회원정보 수정이 완료되었습니다.");
+        }catch (Exception e){
+            model.addAttribute("errorMessage","회원정보 수정 중 에러가 발생하였습니다.");
+            return "member/userForm";
+        }
+
+        return "member/myPage";
+    }
+
 
     //관리자페이지 회원목록
     @GetMapping(value = "/list")
@@ -96,24 +123,8 @@ public class MemberController {
         return "member/memberList";
     }
 
-    //회원정보 수정
-    @PostMapping(value = "/user/{memberId}")
-    public String memberUserUpdate(@Valid MemberFormDto memberFormDto, BindingResult bindingResult,
-                                   Model model){
-        try{
-
-            memberService.updateMember(memberFormDto);
-            model.addAttribute("message", "회원정보 수정이 완료되었습니다.");
-        }catch (Exception e){
-            model.addAttribute("errorMessage","회원정보 수정 중 에러가 발생하였습니다.");
-            return "member/userForm";
-        }
-
-        return "redirect:/members/mypage";
-    }
-
     @PostMapping(value = "/new")
-    public String newMember(@Valid MemberFormDto memberFormDto, BindingResult bindingResult, Model model){
+    public String newMember(MemberFormDto memberFormDto, BindingResult bindingResult, Model model){
 
         if(bindingResult.hasErrors()){
             return "member/memberForm";

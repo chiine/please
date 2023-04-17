@@ -65,10 +65,11 @@ public class Member extends BaseEntity{
         return role.getKey();
     }
 	
-    public void updateMember(MemberFormDto memberFormDto) {
+	public void updateMember(MemberFormDto memberFormDto, PasswordEncoder passwordEncoder) {
         //Member 엔티티를 수정하는 메소드
         this.name = memberFormDto.getName();
         this.id = memberFormDto.getId();
+        this.password = passwordEncoder.encode(memberFormDto.getPassword());
         this.zipcode = memberFormDto.getZipcode();
         this.phone = memberFormDto.getPhone();
         this.email = memberFormDto.getEmail();

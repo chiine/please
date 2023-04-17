@@ -49,7 +49,7 @@ public class ItemController {
     @GetMapping(value = "/category/{itemCategory}")
     public String itemCategory(@PathVariable("itemCategory")String itemCategory, ItemSearchDto itemSearchDto,Optional<Integer> page, Model model){
 
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 3);
+        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 5);
         Page<MainItemDto> items = itemService.getCagtegoryItemPage(itemSearchDto,itemCategory ,pageable);
 
         model.addAttribute("items", items);

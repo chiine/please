@@ -69,9 +69,9 @@ public class MemberService implements UserDetailsService {
         memberRepository.deleteById(id);
     }
 
-    public long updateMember(MemberFormDto memberFormDto) throws Exception{
+    public long updateMember(MemberFormDto memberFormDto, PasswordEncoder passwordEncoder) throws Exception{
         Member member = memberRepository.findById(memberFormDto.getNum()).orElseThrow(EntityNotFoundException::new);
-        member.updateMember(memberFormDto);
+        member.updateMember(memberFormDto ,passwordEncoder);
 
         return member.getNum();
     }

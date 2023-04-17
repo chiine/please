@@ -4,6 +4,9 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout1}">
 
+
+
+	        
 <div layout:fragment="content">
 	<div id="inwrap02">
 		<div class="p_title"><img src="/img/pet_icon13.png">마이페이지</div>
@@ -63,4 +66,14 @@
         
   	</div>
 </div>
+<th:block layout:fragment="script">
+	    <script th:inline="javascript">
+	        $(document).ready(function(){
+	            var message = [[${message}]];
+	            if(message != null){
+	                alert(message);
+	            }
+	        });
+        </script>
+<th:block>
 </html>

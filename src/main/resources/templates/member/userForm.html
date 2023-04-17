@@ -79,53 +79,60 @@
 	       	<button class="Btn Btn02" sec:authorize="isAuthenticated()" aria-current="page" 
 	       			onClick="location.href='/meeting/mymeeting'">내가 쓴 모임글</button>
        	</div>
-	    <form role="form" method="post" th:object="${memberFormDto}" th:each="memberFormDto : ${memberFormDto}" class="join_box" style="margin-top:50px;">
-	        <input type="hidden" th:field="*{num}" th:value="${memberFormDto.num}">
-		    <div class="join_cont">
-	            <label th:for="name">이름</label>
-	            <input type="text" th:field="*{name}" th:value="${memberFormDto.name}" class="join_input" placeholder="이름을 입력해주세요" readonly>
-	        </div>
-		    <div class="join_cont">
-	            <label th:for="id">아이디</label>
-	            <input type="text" th:field="*{id}" th:value="${memberFormDto.id}" class="join_input" placeholder="아이디를 입력해주세요" readonly>
-	        </div>
-		    <div class="join_cont">
-	            <label th:for="phone">핸드폰 번호</label>
-	            <input type="text" th:field="*{phone}" th:value="${memberFormDto.phone}" class="join_input" placeholder="핸드폰 번호 입력  [010-xxxx-xxxx] 양식으로 입력하여주세요">
-	            <p th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="fieldError">Incorrect data</p>
-	        </div>
-	        <div class="join_cont">
+   		 <form role="form" method="post" th:each="memberFormDto : ${memberFormDto}"  th:object="${memberFormDto}"  class="join_box" style="margin-top:50px;">
+            <input type="hidden" th:field="*{num}" th:value="${memberFormDto.num}">
+            <div class="join_cont">
+                <label th:for="name">이름 변경</label>
+                <input type="text" th:field="*{name}" th:value="${memberFormDto.name}" class="join_input" placeholder="이름을 입력해주세요">
+                <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError">Incorrect data</p>
+            </div>
+            <div class="join_cont">
+                <label th:for="id">아이디 변경</label>
+                <input type="text" th:field="*{id}" th:value="${memberFormDto.id}" class="join_input" placeholder="아이디를 입력해주세요">
+                <p th:if="${#fields.hasErrors('id')}" th:errors="*{id}" class="fieldError">Incorrect data</p>
+            </div>
+            <div class="join_cont">
+                <label th:for="password">비밀번호 변경</label>
+                <input type="password" th:field="*{password}" class="join_input" placeholder="비밀번호 입력" >
+                <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="fieldError">Incorrect data</p>
+            </div>
+            <div class="join_cont">
+                <label th:for="phone">핸드폰 번호 변경</label>
+                <input type="text" th:field="*{phone}" th:value="${memberFormDto.phone}" class="join_input" placeholder="핸드폰 번호 입력  [010-xxxx-xxxx] 양식으로 입력하여주세요">
+                <p th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="fieldError">Incorrect data</p>
+            </div>
+            <div class="join_cont">
                 <label th:for="email">이메일 변경</label>
                 <input type="text" th:field="*{email}" th:value="${memberFormDto.email}" class="join_input" placeholder="이메일 형식에 맞지않습니다.">
                 <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="fieldError">Incorrect data</p>
             </div>
-		    <div class="join_cont">
-	            <label th:for="zipcode">우편번호 <button type="button" class="Btn btn_addr" onclick="findAddr()"><i class="fa fa-search"></i> 우편번호 찾기</button></label>
-	            <input type="text" th:field="*{zipcode}" th:value="${memberFormDto.zipcode}" id="zipcode" class="join_input" placeholder="우편번호를 입력해주세요">
-	
-	            <p th:if="${#fields.hasErrors('zipcode')}" th:errors="*{zipcode}" class="fieldError">Incorrect data</p>
-	        </div>
-		    <div class="join_cont">
-	            <label th:for="streetAdr">도로명 주소</label>
-	            <input type="text" th:field="*{streetAdr}" th:value="${memberFormDto.streetAdr}" id="streetAdr" class="join_input" placeholder="도로명 주소를 입력해주세요">
-	            <p th:if="${#fields.hasErrors('streetAdr')}" th:errors="*{streetAdr}" class="fieldError">Incorrect data</p>
-	        </div>
-		    <div class="join_cont">
-	            <label th:for="detailAdr">상세주소</label>
-	            <input type="text" th:field="*{detailAdr}" th:value="${memberFormDto.detailAdr}" id="detailAdr" class="join_input" placeholder="상세 주소를 입력해주세요">
-	            <p th:if="${#fields.hasErrors('detailAdr')}" th:errors="*{detailAdr}" class="fieldError">Incorrect data</p>
-	        </div>
-	        <input type="hidden" id="extraAddress" placeholder="참고항목">
+            <div class="join_cont">
+                <label th:for="zipcode">우편번호 변경<button type="button" class="btn btn-default" onclick="findAddr()"><i class="fa fa-search"></i> 우편번호 찾기</button></label>
+                <input type="text" th:field="*{zipcode}" th:value="${memberFormDto.zipcode}" id="zipcode" class="join_input" placeholder="우편번호를 입력해주세요">
+
+                <p th:if="${#fields.hasErrors('zipcode')}" th:errors="*{zipcode}" class="fieldError">Incorrect data</p>
+            </div>
+            <div class="join_cont">
+                <label th:for="streetAdr">도로명 주소 변경</label>
+                <input type="text" th:field="*{streetAdr}" th:value="${memberFormDto.streetAdr}" id="streetAdr" class="join_input" placeholder="도로명 주소를 입력해주세요">
+                <p th:if="${#fields.hasErrors('streetAdr')}" th:errors="*{streetAdr}" class="fieldError">Incorrect data</p>
+            </div>
+            <div class="join_cont">
+                <label th:for="detailAdr">상세주소 변경</label>
+                <input type="text" th:field="*{detailAdr}" th:value="${memberFormDto.detailAdr}" id="detailAdr" class="join_input" placeholder="상세 주소를 입력해주세요">
+                <p th:if="${#fields.hasErrors('detailAdr')}" th:errors="*{detailAdr}" class="fieldError">Incorrect data</p>
+            </div>
+             <input type="hidden" id="extraAddress" placeholder="참고항목">
 	        <div class="form-group" style="display:none">
 	            <select th:field="*{role}" class="custom-select">
 	                <option value="USER">USER</option>
 	            </select>
 	        </div>
-	        <div class="Btn_box" style="margin-top:30px">
-	            <button th:formaction="@{'/members/user/' + ${memberFormDto.num} }" type="submit" class="Btn">수정</button>
-	        </div>
-	        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-	    </form>
+             <div class="Btn_box" style="margin-top:30px">
+                <button th:formaction="@{'/members/user/' + ${memberFormDto.id} }" type="submit" class="Btn">수정</button>
+            </div>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        </form>
 	</div>
 </div>
 </html>

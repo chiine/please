@@ -10,7 +10,6 @@ public class CommonUtil {
 			id = email.substring(0, index);
 		}else {
 			id = email;
-			
 		}
 			return id;
 	}

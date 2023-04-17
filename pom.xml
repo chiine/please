@@ -131,11 +131,6 @@
     <version>9.0.62</version>
 </dependency>
 
-		<dependency>
-			<groupId>com.pgm</groupId>
-			<artifactId>Security_OAuth2</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
 	</dependencies>
 
 	<build>

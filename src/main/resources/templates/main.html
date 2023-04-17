@@ -2,116 +2,199 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout1}">
+<head> 
+    <link th:href="@{/css/swiper.min.css}" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.3.3/js/swiper.min.js"></script>
+    
+    <!-- 제이쿼리 불러오기 -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    
+   <!-- Slick 불러오기 -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.min.css">
+</head>
 
 <div layout:fragment="content">
-	<div class="main_ban">
-		<div id="inwrap" style="position:relative;">
-			<!--div class="main_ban_box">
-				<p>우리 댕댕이 수제간식</p>
-				<span>구경하러 가기<img src="/img/pet_icon01.png"></span>
-			</div-->
-		</div>		
-	</div>
-	<div id="inwrap">
-		<div class="main_item_box">상품 준비중 :)</div>
-		
-		<ul class="main_count">
-		  <li>
-		    <span class="number">861,983</span> 개
-		    <p>누적 판매량</p>
-		  </li>
-		  <li>
-		    <span class="number">27,596,367</span> 명
-		    <p>누적 방문자수</p>
-		  </li>
-		  <li>
-		    <span class="number">94</span> %
-		    <p>구매회원 재구매율</p>
-		  </li>
-		</ul>
-		<script>
-			$(function() {
-			  var count0 = 861200;
-			  var count1 = 27595500;
-			  var count2 = 60;			
-			  timeCounter();
-			
-			  function timeCounter() {			
-			    id0 = setInterval(count0Fn, 1);			
-			    function count0Fn() {
-			      count0++;
-			      if (count0 > 861983) {
-			        clearInterval(id0);
-			      } else {
-			        $(".number").eq(0).text(count0);
-			      }
-			    }
+   <div class="main_ban">
+      <div id="inwrap" style="position:relative;">
+         <!--div class="main_ban_box">
+            <p>우리 댕댕이 수제간식</p>
+            <span>구경하러 가기<img src="/img/pet_icon01.png"></span>
+         </div-->
+      </div>      
+   </div>
+   <div id="inwrap">
+      <div class="main_item_box">
+         <div class="swiper-container gallery-thumbs">
+            <div class="swiper-wrapper" id="slider-div">
+               <th:block th:each="item, status: ${items.getContent()}">
+               <div class="swiper-slide">
+                  <div class="swiper-slide-container">
+                     <a th:href="'/item/' +${item.id}" class="main_item_cont">
+                        <div class="item_cont_img">
+                                <img th:src="${item.imgUrl}" th:alt="${item.itemNm}">
+                             </div>
+                             <div class="item_cont_text">
+                                 <h4>[[${item.itemNm}]]</h4>
+                                 <!--p>[[${item.itemDetail}]]</p-->
+                                 <p>#오전 7시, 당일 주문 마감!!</p>
+                                 <h3>[[${item.price}]]원</h3>
+                             </div>
+                         </a>
+                      </div>
+                   </div>
+                 </th:block>
+            </div>
+         </div>
+      </div>
 
-			    id1 = setInterval(count1Fn, 1);
-			    function count1Fn() {
-			      count1++;
-			      if (count1 > 27596367) {
-			        clearInterval(id1);
-			      } else {
-			        $(".number").eq(1).text(count1);
-			      }
-			    }
-			
-			    id2 = setInterval(count2Fn, 100);			
-			    function count2Fn() {
-			      count2++;
-			      if (count2 > 94) {
-			        clearInterval(id2);
-			      } else {
-			        $(".number").eq(2).text(count2);
-			      }
-			    }
-			  }
-			});
-		</script>
-	</div>
-	<div id="inwrap">
-		<ul class="main_4btn">
-			<li>
-				<img src="/img/pet_icon02.png"><span>앱설치 10%쿠폰 혜택</span>
-				<p>힐링펫 앱 설치시</p>
-				<p>10%할인쿠폰 증정 (1인 1회 한정)</p>
-				<div class="hidden_cat"></div>
-			</li>
-			<li>
-				<img src="/img/pet_icon03.png"><span>아이스팩 할인혜택</span>
-				<p>힐링펫 앱을 통한 구매시 500원 할인</p>
-				<p>아이스팩 20개 반납시 적립금 5000원</p>
-				<div class="hidden_cat"></div>
-			</li>
-			<li>
-				<img src="/img/pet_icon04.png"><span>적립금 혜택</span>
-				<p>매달 추첨을 통해 구매금액의 10%를</p>
-				<p> 적립금으로 돌려드립니다.</p>
-				<div class="hidden_cat"></div>
-			</li>
-			<li>
-				<img src="/img/pet_icon05.png"><span>구매후기 혜택</span>
-				<p>리뷰 작성시 </p>
-				<p>10%할인쿠폰 증정 (1인 1회 한정)</p>
-				<div class="hidden_cat"></div>
-			</li>
-		</ul>
-			
-	</div>
-	<div class="main_imgt">
-		<div class="main_imgt_L"></div>
-		<div class="main_imgt_R">
-			<div data-aos="fade-left" data-aos-offset="200" data-aos-easing="ease-out-cubic" data-aos-duration="2000" >
-				<h2>14DAYS REVIEW EVENT</h2>
-				<h3>RESET,<br>14일의 기적을 보여주세요!</h3>
-				<p>댕댕챱챱을 만나고 달라진 강아지들의 일상을 공유해 주세요.</p>
-				<p>14일 급여 후기를 매일 연속으로 남겨주신 모든 분들께</p>
-				<p>수제 간식 구매금액 100%를 적립금으로 환급해 드립니다.</p>
-			</div>
-		</div>
-		<script> 
+      
+      <th:block layout:fragment="script">
+         <script>
+          $(function(){
+            $('#slider-div').slick({
+                slide: 'div',        //슬라이드 되어야 할 태그 ex) div, li 
+                infinite : true,     //무한 반복 옵션     
+                slidesToShow : 5,        // 한 화면에 보여질 컨텐츠 개수
+                slidesToScroll : 1,        //스크롤 한번에 움직일 컨텐츠 개수
+                speed : 100,     // 다음 버튼 누르고 다음 화면 뜨는데까지 걸리는 시간(ms)
+                arrows : true,         // 옆으로 이동하는 화살표 표시 여부
+                dots : true,         // 스크롤바 아래 점으로 페이지네이션 여부
+                autoplay : true,            // 자동 스크롤 사용 여부
+                autoplaySpeed : 2000,         // 자동 스크롤 시 다음으로 넘어가는데 걸리는 시간 (ms)
+                pauseOnHover : true,        // 슬라이드 이동    시 마우스 호버하면 슬라이더 멈추게 설정
+                vertical : false,        // 세로 방향 슬라이드 옵션
+                prevArrow : "<div class='swiper-button-prev'></div>",        // 이전 화살표 모양 설정
+                nextArrow : "<div class='swiper-button-next'></div>",        // 다음 화살표 모양 설정
+                dotsClass : "slick-dots",     //아래 나오는 페이지네이션(점) css class 지정
+                draggable : true,     //드래그 가능 여부 
+                
+                responsive: [ // 반응형 웹 구현 옵션
+                    {  
+                        breakpoint: 960, //화면 사이즈 960px
+                        settings: {
+                            //위에 옵션이 디폴트 , 여기에 추가하면 그걸로 변경
+                            slidesToShow:3 
+                        } 
+                    },
+                    { 
+                        breakpoint: 768, //화면 사이즈 768px
+                        settings: {    
+                            //위에 옵션이 디폴트 , 여기에 추가하면 그걸로 변경
+                            slidesToShow:2 
+                        } 
+                    }
+                ]
+ 
+            });
+          })
+          
+          
+          
+          
+    </script>
+
+      </th:block>
+      
+      <ul class="main_count">
+        <li>
+          <span class="number">861,983</span> 개
+          <p>누적 판매량</p>
+        </li>
+        <li>
+          <span class="number">27,596,367</span> 명
+          <p>누적 방문자수</p>
+        </li>
+        <li>
+          <span class="number">94</span> %
+          <p>구매회원 재구매율</p>
+        </li>
+      </ul>
+      <script>
+         $(function() {
+           var count0 = 861200;
+           var count1 = 27595500;
+           var count2 = 60;         
+           timeCounter();
+         
+           function timeCounter() {         
+             id0 = setInterval(count0Fn, 1);         
+             function count0Fn() {
+               count0++;
+               if (count0 > 861983) {
+                 clearInterval(id0);
+               } else {
+                 $(".number").eq(0).text(count0);
+               }
+             }
+
+             id1 = setInterval(count1Fn, 1);
+             function count1Fn() {
+               count1++;
+               if (count1 > 27596367) {
+                 clearInterval(id1);
+               } else {
+                 $(".number").eq(1).text(count1);
+               }
+             }
+         
+             id2 = setInterval(count2Fn, 100);         
+             function count2Fn() {
+               count2++;
+               if (count2 > 94) {
+                 clearInterval(id2);
+               } else {
+                 $(".number").eq(2).text(count2);
+               }
+             }
+           }
+         });
+      </script>
+   </div>
+   <div id="inwrap">
+      <ul class="main_4btn">
+         <li>
+            <img src="/img/pet_icon02.png"><span>앱설치 10%쿠폰 혜택</span>
+            <p>힐링펫 앱 설치시</p>
+            <p>10%할인쿠폰 증정 (1인 1회 한정)</p>
+            <div class="hidden_cat"></div>
+         </li>
+         <li>
+            <img src="/img/pet_icon03.png"><span>아이스팩 할인혜택</span>
+            <p>힐링펫 앱을 통한 구매시 500원 할인</p>
+            <p>아이스팩 20개 반납시 적립금 5000원</p>
+            <div class="hidden_cat"></div>
+         </li>
+         <li>
+            <img src="/img/pet_icon04.png"><span>적립금 혜택</span>
+            <p>매달 추첨을 통해 구매금액의 10%를</p>
+            <p> 적립금으로 돌려드립니다.</p>
+            <div class="hidden_cat"></div>
+         </li>
+         <li>
+            <img src="/img/pet_icon05.png"><span>구매후기 혜택</span>
+            <p>리뷰 작성시 </p>
+            <p>10%할인쿠폰 증정 (1인 1회 한정)</p>
+            <div class="hidden_cat"></div>
+         </li>
+      </ul>
+         
+   </div>
+   <div class="main_imgt">
+      <div class="main_imgt_L"></div>
+      <div class="main_imgt_R">
+         <div data-aos="fade-left" data-aos-offset="200" data-aos-easing="ease-out-cubic" data-aos-duration="2000" >
+            <h2>14DAYS REVIEW EVENT</h2>
+            <h3>RESET,<br>14일의 기적을 보여주세요!</h3>
+            <p>댕댕챱챱을 만나고 달라진 강아지들의 일상을 공유해 주세요.</p>
+            <p>14일 급여 후기를 매일 연속으로 남겨주신 모든 분들께</p>
+            <p>수제 간식 구매금액 100%를 적립금으로 환급해 드립니다.</p>
+         </div>
+      </div>
+      <script> 
             AOS.init(); // 자바스크립트로 init()을 해야 동작한다.
         </script>
-	</div>
+   </div>
 </div>

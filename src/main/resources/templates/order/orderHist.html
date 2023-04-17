@@ -87,7 +87,6 @@
 	    		th:each="order : ${orders.getContent()}" >
 	    	
 			<div th:each="orderItem : ${order.orderItemDtoList}" style="display:flex;text-align:center;" class="hist_box">
-				<span th:text="${order.orderId}"></span>
 				<span th:text="${order.orderDate} + ' 주문'" class="hist_date"></span>
 				<div class="hist_item">
 					<div class="hist_img"><img th:src="${orderItem.imgUrl}" th:alt="${orderItem.itemNm}"></div>
@@ -110,7 +109,6 @@
 	    		th:each="order : ${orders.getContent()}" >
 	    	
 			<div th:each="orderItem : ${order.orderItemDtoList}" style="display:flex;text-align:center;" class="hist_box">
-				<span th:text="${order.orderId}"></span>
 				<span th:text="${order.orderDate} + ' 주문'" class="hist_date"></span>
 				<div class="hist_item">
 					<div class="hist_img"><img th:src="${orderItem.imgUrl}" th:alt="${orderItem.itemNm}"></div>

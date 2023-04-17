@@ -1,7 +1,6 @@
 <!-- 회원 목록 페이지(관리자) -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <link rel='stylesheet' href='/css/woocommerce-layout.css' type='text/css' media='all'/>
     <link rel='stylesheet' href='/css/woocommerce-smallscreen.css' type='text/css'
@@ -24,19 +23,16 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <th:block layout:fragment="script"></th:block>
-    <th:block layout:fragment="css"></th:block>
+
     <!-- 사용자 스크립트 추가 -->
     <th:block layout:fragment="script">
         <script th:inline="javascript">
-        $(document).ready(function(){
-            var errorMessage = [[${errorMessage}]];
-            if(errorMessage != null){
-                alert(errorMessage);
+         $(document).ready(function(){
+            var message = [[${message}]];
+            if(message != null){
+                alert(message);
             }
-            bindDomEvent();
-        });
-
+		  });
         function bindDomEvent(){
             $(".custom-file-input").on("change", function() {
                 var fileName = $(this).val().split("\\").pop();  //이미지 파일명
@@ -143,18 +139,14 @@
                 <td th:text="${list.phone}"></td>
                 <td th:text="${list.role}"></td>
                 <td>
-                    <button type="button" class="btn btn-primary"><a style="color:#fff;"
-                                                                     th:href="'/members/'+${list.id}">수정</a></button>
+                    <button type="button" class="btn btn-primary" style="color:#fff;"
+                    	th:onclick="|location.href='@{/members/{memberId}(memberId=${list.id})}'|">수정</button>
                 </td>
                 <td>
-                    <button type="button" class="btn btn-danger"><a style="color:#fff;"
-                                                                     th:href="'/members/delete/'+${list.num}">삭제</a>
-                    </button>
+                    <button type="button" class="btn btn-danger"
+                    	th:onclick="|location.href='@{/members/delete/{memberNum}(memberNum=${list.num})}'|">삭제</button> 
                 </td>
-
-
             </tr>
-
         </table>
     </div>
 
